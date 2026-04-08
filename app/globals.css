@@ -1,26 +1,1695 @@
+.checkoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .checkoutGrid {
+    grid-template-columns: 1fr;
+  }
+}
 @import "tailwindcss";
 
+/* ===============================
+   VARIABLES
+================================ */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #1e4d4f;
+  --text-muted: #777;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ===============================
+   RESET
+================================ */
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ===============================
+   BODY
+================================ */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-main), sans-serif;
+
+  background-image: url("/backgrounds/whiteBG.jpg");
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   ELEMENTS
+================================ */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===============================
+   LAYOUT
+================================ */
+/* MAIN CONTAINER */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20 24px;
+}
+
+/* ADMIN CONTAINER */
+.adminContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 16px;
+}
+
+.section {
+  padding: 56px 0 40px;
+}
+
+/* ===============================
+   GLOBAL HEADINGS SYSTEM
+================================ */
+
+/* H1 – hlavný nadpis stránky */
+.headingPrimary {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+/* H2 – sekcie */
+.headingSecondary {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* H3 – podnadpisy */
+.headingTertiary {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+  text-transform: none;
+}
+
+/* ===============================
+   HOME GRID
+================================ */
+.homeGrid {
+  display: grid;
+  gap: 40px;
+}
+
+/* tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .homeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .blogSection {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 40px;
+  }
+}
+
+/* desktop */
+@media (min-width: 1025px) {
+  .homeGrid {
+    grid-template-columns: 2fr 1fr;
+    align-items: stretch;
+  }
+
+  .blogSection {
+    border-left: 1px solid #ccc;
+    padding-left: 30px;
+  }
+}
+
+/* ===============================
+   BLOG SWITCH
+================================ */
+.desktopBlog {
+  display: block;
+}
+
+.mobileBlog {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .desktopBlog {
+    display: none;
+  }
+
+  .mobileBlog {
+    display: block;
+    margin-top: 40px;
+  }
+}
+
+/* ===============================
+   PROGRAM SECTION
+================================ */
+.programRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0; /* 🔥 menšia medzera */
+}
+
+.programLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 🔥 menší gap */
+  flex-wrap: wrap;
+}
+
+/* dátum */
+.programDateBig {
+  font-size: 28px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* deň */
+.programDay {
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* čas */
+.programTime {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* divider */
+.programDivider {
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--primary);
+}
+
+/* názov */
+.programTitle {
+  font-size: 22px;
+  font-weight: 400;
+  color: #000;
+}
+
+/* RIGHT */
+.programRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* sála */
+.programHall {
+  font-size: 16px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* button */
+.buyBtn {
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 36px;
+}
+
+.secondaryBtn {
+  border: 2px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px; /* 🔥 match buyBtn visual height */
+}
+
+/* vypredané */
+.buyBtn.soldOut {
+  background: #c9a24a;
+  cursor: default;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .programRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .programRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ===============================
+   UPCOMING
+================================ */
+.upcomingTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.upcomingRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upcomingCard {
+  position: relative;
+  width: 200px;
+  height: 280px;
+  display: block;
+  transition: transform 0.4s ease, z-index 0.3s;
+}
+
+.upcomingCard:not(:first-child) {
+  margin-left: -40px;
+}
+
+.upcomingInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+.upcomingImage {
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: all 0.5s ease;
+}
+
+.upcomingCard:hover {
+  transform: scale(1.12) rotate(0deg) !important;
+  z-index: 20;
+}
+
+.upcomingCard:hover .upcomingImage {
+  filter: grayscale(0%);
+}
+
+.upcomingOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.85) 0%,
+    rgba(0,0,0,0.6) 30%,
+    rgba(0,0,0,0.3) 60%,
+    rgba(0,0,0,0) 100%
+  );
+
+  color: #fff;
+}
+
+/* mobile upcoming */
+@media (max-width: 768px) {
+  .upcomingTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .upcomingRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .upcomingCard {
+    width: 100%;
+    height: 200px;
+    transform: none !important;
+  }
+
+  .upcomingCard:not(:first-child) {
+    margin-left: 0;
+  }
+
+  .upcomingInner {
+    border-radius: 12px;
+  }
+
+  .upcomingOverlay {
+    padding: 10px;
+  }
+
+  .upcomingOverlay div:first-child {
+    font-size: 14px;
+  }
+}
+
+/* ===============================
+   BLOG
+================================ */
+.blogSection {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.blogList {
+  margin-top: 24px;
+  display: grid;
+  gap: 26px;
+}
+
+.blogItemTitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: #000;
+}
+
+.blogItemDate {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.primaryBtn {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.blogBtn {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===============================
+   MOBILE TYPOGRAPHY + PROGRAM
+================================ */
+@media (max-width: 768px) {
+  .headingPrimary {
+    font-size: 24px;
+  }
+
+  .headingSecondary {
+    font-size: 18px;
+  }
+
+  .headingTertiary {
+    font-size: 16px;
+  }
+
+  /* PROGRAM – MOBILE TUNING */
+  .programDateBig {
+    font-size: 22px;
+  }
+
+  .programDay {
+    font-size: 13px;
+  }
+
+  .programTime {
+    font-size: 20px;
+  }
+
+  .programDivider {
+    font-size: 22px;
+  }
+
+  .programTitle {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .programHall {
+    font-size: 13px;
+  }
+
+  .buyBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+    height: 32px;
+  }
+
+  .secondaryBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+    height: 40px;
+  }
+}
+
+/* ===============================
+   VISIBILITY HELPERS
+================================ */
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+}
+
+/* ===============================
+   TEXT PAGE (VOP)
+================================ */
+
+h2 {
+  margin-top: 30px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+h3 {
+  margin-top: 25px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+p {
+  margin-top: 10px;
+}
+
+ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+.programTop {
+  display: grid;
+  grid-template-columns: 
+    70px   /* dátum */
+    130px  /* deň */
+    70px   /* čas */
+    20px   /* | */
+    1fr;   /* názov */
+
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .programTop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ===============================
+   TEXT PAGE HEADINGS
+================================ */
+
+.pageTitle {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+.pageHeading {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 35px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.pageSubheading {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 25px;
+  margin-bottom: 8px;
+  text-transform: none;
+}
+
+.programPage {
+  padding: 40px 0;
+}
+
+@media (max-width: 768px) {
+  .programPage {
+    padding: 20px 0;
+  }
+
+  .programPage .container {
+    padding: 20 16px; /* 🔥 menší a príjemnejší odsadenie */
+  }
+}
+
+/* ===============================
+   FOOTER RESPONSIVE GRID
+================================ */
+.footerGrid {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20 24px;
+}
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .adminContainer {
+    padding: 30px 16px;
+  }
+}
+
+/* ===============================
+   PEOPLE GRID AND CARDS
+================================ */
+.peopleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.personCard {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  align-items: flex-start;
+}
+
+.personImage {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.personText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.personText.centered {
+  justify-content: center;
+}
+
+.personName {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.personRole {
+  color: #666;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+.personBio {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .peopleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .personCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .personImage {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    margin: 0 0 16px 0;
+  }
+
+  .personText {
+    width: 100%;
+    text-align: left;
+  }
+
+  .personName {
+    font-size: 18px;
+  }
+
+  .personRole {
+    font-size: 15px;
+  }
+
+  .personBio {
+    font-size: 13px;
+  }
+}
+main {
+  flex: 1;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+footer {
+  margin-top: 40px;
+}
+
+@media (max-width: 950px) {
+  .peopleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.newsletterWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.newsletterCard {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+
+.formGroup label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.formLabel {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(30,77,79,0.15);
+}
+
+.formSuccess {
+  margin-top: 15px;
+  color: green;
+  font-size: 14px;
+}
+
+.formError {
+  margin-top: 15px;
+  color: red;
+  font-size: 14px;
+}
+
+.giftOptions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.giftOption {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.giftOption:hover {
+  border-color: var(--primary);
+}
+
+.giftOption.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .blogCard {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@import "tailwindcss";
+
+/* ===============================
+   VARIABLES
+================================ */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #1e4d4f;
+  --text-muted: #777;
+}
+
+/* ===============================
+   RESET
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ===============================
+   BODY
+================================ */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-main), sans-serif;
+
+  background-image: url("/backgrounds/whiteBG.jpg");
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   ELEMENTS
+================================ */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===============================
+   LAYOUT
+================================ */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20 24px;
+}
+
+.section {
+  padding: 56px 0 40px;
+}
+
+/* ===============================
+   GLOBAL HEADINGS SYSTEM
+================================ */
+
+/* H1 – hlavný nadpis stránky */
+.headingPrimary {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+/* H2 – sekcie */
+.headingSecondary {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* H3 – podnadpisy */
+.headingTertiary {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+  text-transform: none;
+}
+
+/* ===============================
+   HOME GRID
+================================ */
+.homeGrid {
+  display: grid;
+  gap: 40px;
+}
+
+/* tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .homeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .blogSection {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 40px;
+  }
+}
+
+/* desktop */
+@media (min-width: 1025px) {
+  .homeGrid {
+    grid-template-columns: 2fr 1fr;
+    align-items: stretch;
+  }
+
+  .blogSection {
+    border-left: 1px solid #ccc;
+    padding-left: 30px;
+  }
+}
+
+/* ===============================
+   BLOG SWITCH
+================================ */
+.desktopBlog {
+  display: block;
+}
+
+.mobileBlog {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .desktopBlog {
+    display: none;
+  }
+
+  .mobileBlog {
+    display: block;
+    margin-top: 40px;
+  }
+}
+
+/* ===============================
+   PROGRAM SECTION
+================================ */
+.programRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0; /* 🔥 menšia medzera */
+}
+
+.programLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 🔥 menší gap */
+  flex-wrap: wrap;
+}
+
+/* dátum */
+.programDateBig {
+  font-size: 28px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* deň */
+.programDay {
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* čas */
+.programTime {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* divider */
+.programDivider {
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--primary);
+}
+
+/* názov */
+.programTitle {
+  font-size: 22px;
+  font-weight: 400;
+  color: #000;
+}
+
+.programMiddle {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .programMiddle {
+    font-size: 22px;
+    font-weight: 600;
+  }
+}
+
+/* RIGHT */
+.programRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* sála */
+.programHall {
+  font-size: 16px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* button */
+.buyBtn {
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* vypredané */
+.buyBtn.soldOut {
+  background: #c9a24a;
+  cursor: default;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .programRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .programRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ===============================
+   UPCOMING
+================================ */
+.upcomingTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.upcomingRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upcomingCard {
+  position: relative;
+  width: 200px;
+  height: 280px;
+  display: block;
+  transition: transform 0.4s ease, z-index 0.3s;
+}
+
+.upcomingCard:not(:first-child) {
+  margin-left: -40px;
+}
+
+.upcomingInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+.upcomingImage {
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: all 0.5s ease;
+}
+
+.upcomingCard:hover {
+  transform: scale(1.12) rotate(0deg) !important;
+  z-index: 20;
+}
+
+.upcomingCard:hover .upcomingImage {
+  filter: grayscale(0%);
+}
+
+.upcomingOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.85) 0%,
+    rgba(0,0,0,0.6) 30%,
+    rgba(0,0,0,0.3) 60%,
+    rgba(0,0,0,0) 100%
+  );
+
+  color: #fff;
+}
+
+/* mobile upcoming */
+@media (max-width: 768px) {
+  .upcomingTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .upcomingRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .upcomingCard {
+    width: 100%;
+    height: 200px;
+    transform: none !important;
+  }
+
+  .upcomingCard:not(:first-child) {
+    margin-left: 0;
+  }
+
+  .upcomingInner {
+    border-radius: 12px;
+  }
+
+  .upcomingOverlay {
+    padding: 10px;
+  }
+
+  .upcomingOverlay div:first-child {
+    font-size: 14px;
+  }
+}
+
+/* ===============================
+   BLOG
+================================ */
+.blogSection {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.blogList {
+  margin-top: 24px;
+  display: grid;
+  gap: 26px;
+}
+
+.blogItemTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.2;
+}
+
+.blogItemExcerpt {
+  margin-top: 10px;
+  line-height: 1.6;
+  color: #666;
+  font-size: 14px;
+  text-align: justify;
+}
+
+.blogItemDate {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.primaryBtn {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  height: 40px;
+}
+
+.blogBtn {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===============================
+   MOBILE TYPOGRAPHY + PROGRAM
+================================ */
+@media (max-width: 768px) {
+  .headingPrimary {
+    font-size: 24px;
+  }
+
+  .headingSecondary {
+    font-size: 18px;
+  }
+
+  .headingTertiary {
+    font-size: 16px;
+  }
+
+  /* PROGRAM – MOBILE TUNING */
+  .programDateBig {
+    font-size: 22px;
+  }
+
+  .programDay {
+    font-size: 13px;
+  }
+
+  .programTime {
+    font-size: 20px;
+  }
+
+  .programDivider {
+    font-size: 22px;
+  }
+
+  .programTitle {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .programHall {
+    font-size: 13px;
+  }
+
+  .buyBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .secondaryBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+    height: 40px;
+  }
+}
+
+/* ===============================
+   VISIBILITY HELPERS
+================================ */
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+}
+
+/* ===============================
+   TEXT PAGE (VOP)
+================================ */
+
+h2 {
+  margin-top: 30px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+h3 {
+  margin-top: 25px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+p {
+  margin-top: 10px;
+}
+
+ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+.programTop {
+  display: grid;
+  grid-template-columns: 
+    70px   /* dátum */
+    130px  /* deň */
+    70px   /* čas */
+    20px   /* | */
+    1fr;   /* názov */
+
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .programTop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ===============================
+   TEXT PAGE HEADINGS
+================================ */
+
+.pageTitle {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+.pageHeading {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 35px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.pageSubheading {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 25px;
+  margin-bottom: 8px;
+  text-transform: none;
+}
+
+.programPage {
+  padding: 40px 0;
+}
+
+@media (max-width: 768px) {
+  .programPage {
+    padding: 20px 0;
+  }
+
+  .programPage .container {
+    padding: 20 16px; /* 🔥 menší a príjemnejší odsadenie */
+  }
+}
+
+/* ===============================
+   FOOTER RESPONSIVE GRID
+================================ */
+.footerGrid {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20 24px;
+}
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 40px;
+  }
+}
+
+/* ===============================
+   PEOPLE GRID AND CARDS
+================================ */
+.peopleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.personCard {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  align-items: flex-start;
+}
+
+.personImage {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.personText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.personText.centered {
+  justify-content: center;
+}
+
+.personName {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.personRole {
+  color: #666;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+.personBio {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .peopleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .personCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .personImage {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    margin: 0 0 16px 0;
+  }
+
+  .personText {
+    width: 100%;
+    text-align: left;
+  }
+
+  .personName {
+    font-size: 18px;
+  }
+
+  .personRole {
+    font-size: 15px;
+  }
+
+  .personBio {
+    font-size: 13px;
+  }
+}
+main {
+  flex: 1;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+footer {
+  margin-top: 40px;
+}
+
+@media (max-width: 950px) {
+  .peopleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.newsletterWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.newsletterCard {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #2bb3b1; /* tvoja tyrkysová */
+}
+
+.formSuccess {
+  margin-top: 15px;
+  color: green;
+  font-size: 14px;
+}
+
+.formError {
+  margin-top: 15px;
+  color: red;
+  font-size: 14px;
+}
+
+.giftOptions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.giftOption {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.giftOption:hover {
+  border-color: var(--primary);
+}
+
+.giftOption.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .blogCard {
+    grid-template-columns: 1fr !important;
+  }
 }

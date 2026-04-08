@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DivadelnaInscenacia {
+  id              Int      @id @default(autoincrement())
+
+  nazov           String
+  anotacia        String
+  obsah           String
+
+  rezia           String?
+  credits         String?
+
+  dlzkaMinut      Int
+  vekovaKategoria String
+  datumPremiery   DateTime
+  typ             String
+
+  viditelna       Boolean  @default(true)
+
+  coverImage      String?
+  heroImage       String?
+
+  trailerUrl      String? 
+
+  galleryImages   String[] 
+
+  terminy         TerminHrania[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Hall {
+  id        Int      @id @default(autoincrement())
+  nazov     String   @unique
+
+  seats     HallSeat[]
+  terminy   TerminHrania[]
+
+  createdAt DateTime @default(now())
+}
+
+model TerminHrania {
+  id           Int      @id @default(autoincrement())
+
+  datumCas     DateTime
+  typSedenia   String?
+  zakladnaCena Float
+  zrusene      Boolean  @default(false)
+
+  inscenaciaId Int
+  inscenacia   DivadelnaInscenacia @relation(fields: [inscenaciaId], references: [id])
+
+  hallId       Int
+  hall         Hall @relation(fields: [hallId], references: [id])
+
+  rezervacie   ReservationSeat[]
+  objednavky   Order[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("termin_hrania")
+}
+
+enum SeatType {
+  ROW_SEAT
+  TABLE_SEAT
+  CHAIR
+  CHILD_SEAT
+}
+
+model HallSeat {
+  id         Int      @id @default(autoincrement())
+
+  hallId     Int
+  hall       Hall @relation(fields: [hallId], references: [id])
+
+  rad        Int?
+  cislo      Int?
+
+  stol       Int?
+  stolicka   Int?
+
+  typMiesta  SeatType
+
+  rezervacie ReservationSeat[]
+  tickets    Ticket[]
+
+  createdAt  DateTime @default(now())
+}
+
+model ReservationSeat {
+  id         Int      @id @default(autoincrement())
+
+  terminId   Int
+  hallSeatId Int
+  sessionId  String
+
+  status     String
+  expiresAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  termin     TerminHrania @relation(fields: [terminId], references: [id])
+  hallSeat   HallSeat @relation(fields: [hallSeatId], references: [id])
+
+  @@unique([terminId, hallSeatId])
+  @@index([sessionId])
+}
+
+model GiftCard {
+  id               Int      @id @default(autoincrement())
+  code             String   @unique
+
+  initialAmount    Float
+  remainingAmount  Float 
+
+  purchasedByEmail String?
+  recipientEmail   String?
+  recipientName    String?
+  message          String?
+
+  active           Boolean  @default(true)
+  expiresAt        DateTime?
+
+  orders           Order[]
+  transactions     GiftCardTransaction[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model GiftCardTransaction {
+  id         Int      @id @default(autoincrement())
+
+  giftCardId Int
+  amount     Float
+  type       String
+  orderId    Int?
+  note       String?
+
+  giftCard   GiftCard @relation(fields: [giftCardId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+model Order {
+  id           Int      @id @default(autoincrement())
+
+  code         String   @unique
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  email        String?
+  name         String?
+
+  status       OrderStatus
+  source       OrderSource
+
+  totalAmount  Float
+  paidAt       DateTime?
+
+  tickets      Ticket[]
+
+  terminId     Int
+  termin       TerminHrania @relation(fields: [terminId], references: [id])
+
+  giftCardId   Int?
+  giftCard     GiftCard? @relation(fields: [giftCardId], references: [id])
+
+  stripePaymentIntentId String?
+}
+
+model Ticket {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+
+  code       String   @unique
+
+  usedAt     DateTime?
+
+  orderId    Int
+  order      Order @relation(fields: [orderId], references: [id])
+
+  seatId     Int
+  seat       HallSeat @relation(fields: [seatId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  CONTROLLER
+  SELLER_INTERNAL
+  SELLER_EXTERNAL
+}
+
+model User {
+
+  id        Int @id @default(autoincrement())
+
+  email     String @unique
+  password  String
+
+  role      UserRole @default(CONTROLLER)
+
+  createdAt DateTime @default(now())
+
+}
+
+enum OrderSource {
+  WEB
+  CONTROLLER
+  EXTERNAL_SELLER
+}
+
+enum OrderStatus {
+  RESERVED_UNPAID
+  PAID
+  USED
+  CANCELLED
+}
+
+model NewsletterSubscriber {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String?
+  birthDate   DateTime?
+  createdAt   DateTime  @default(now())
+  isActive    Boolean   @default(true)
+}
+
+enum PersonCategory {
+  HERECKY_SUBOR
+  UMELECKE_VEDENIE
+  VEDENIE_DIVADLA
+  HOSTIA
+  OBCHODNE_ODDELENIE
+  MARKETINGOVE_ODDELENIE
+  NEFORMALNE_VZDELAVANIE
+  TECHNICKY_USEK
+  ZAZEMIE
+}
+
+model Person {
+  id          Int            @id @default(autoincrement())
+  fullName    String
+  roleLabel   String
+  bio         String?
+  imageUrl    String?
+  category    PersonCategory
+  visible     Boolean        @default(true)
+  sortOrder   Int            @default(0)
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model BlogPost {
+  id           Int      @id @default(autoincrement())
+  title        String
+  slug         String   @unique
+  excerpt      String
+  content      String
+  coverImage   String
+  heroImage    String?
+
+  publishedAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SchoolInquiry {
+  id        Int      @id @default(autoincrement())
+  meno      String
+  email     String
+  telefon   String
+  skola     String
+  funkcia   String
+  zaujem    String
+  poznamka  String?
+  vybavene  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
