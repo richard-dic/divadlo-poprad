@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { hash } from "bcryptjs"
 import { requireApiRole } from "@/lib/requireApiRole"
+import { UserRole } from "@prisma/client"
 
 export async function POST(req: Request) {
   const auth = await requireApiRole(["ADMIN"])
@@ -10,9 +11,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
 
-    const email = String(body.email || "")
-    const password = String(body.password || "")
-    const role = String(body.role || "USER")
+    const email = String(body.email || "").trim()
+    const password = String(body.password || "").trim()
+
+    const allowedRoles: UserRole[] = [
+      UserRole.ADMIN,
+      UserRole.CONTROLLER,
+      UserRole.SELLER_INTERNAL,
+      UserRole.SELLER_EXTERNAL,
+    ]
+
+    const role: UserRole = allowedRoles.includes(body.role as UserRole)
+      ? (body.role as UserRole)
+      : UserRole.CONTROLLER
 
     if (!email || !password) {
       return NextResponse.json(
