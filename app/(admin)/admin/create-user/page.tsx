@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import CreateUserForm from "./CreateUserForm"
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton"
 import EditUserForm from "./EditUserForm"
+import type { User } from "@prisma/client"
 
 export default async function Page() {
   const users = await prisma.user.findMany({
@@ -78,7 +79,7 @@ export default async function Page() {
       </details>
 
       <div style={{ display: "grid", gap: 20, marginTop: 40 }}>
-        {users.map(user => (
+        {users.map((user: User) => (
           <div
             key={user.id}
             style={{
