@@ -21,7 +21,6 @@ export default function AppChrome({ role }: { role: Role }) {
   const isScan = pathname.startsWith("/scan")
   const isSeller = pathname.startsWith("/predaj")
 
-  // 🔥 ADMIN ROZHRANIE
   if (role === "ADMIN" && isAdmin) {
     return (
       <>
@@ -31,20 +30,17 @@ export default function AppChrome({ role }: { role: Role }) {
     )
   }
 
-  // 🔥 CONTROLLER
   if (role === "CONTROLLER" && isScan) {
-    return <OperatorHeader type="controller" />
+    return <OperatorHeader role="CONTROLLER" area="scan" />
   }
 
-  // 🔥 SELLER
   if (
     (role === "SELLER_INTERNAL" || role === "SELLER_EXTERNAL") &&
     isSeller
   ) {
-    return <OperatorHeader type="seller" />
+    return <OperatorHeader role={role} area="seller" />
   }
 
-  // 🔥 ADMIN NA PUBLIC (preview)
   if (role === "ADMIN") {
     return (
       <>
@@ -54,6 +50,5 @@ export default function AppChrome({ role }: { role: Role }) {
     )
   }
 
-  // 🔥 PUBLIC USER
   return <PublicHeader />
 }
