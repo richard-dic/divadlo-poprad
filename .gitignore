@@ -51,3 +51,4 @@ node_modules
 .env.production
 divadlo-poprad.zip
 app/scan.zipArchive.zip
+Archive.zip
