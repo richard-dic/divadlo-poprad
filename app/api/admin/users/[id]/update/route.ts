@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client"
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = await requireApiRole(["ADMIN"])
 
@@ -14,7 +14,9 @@ export async function POST(
     return auth
   }
 
-  const id = Number(params.id)
+  const { id: idParam } = await params
+  const id = Number(idParam)
+
   const { email, password, role } = await req.json()
 
   if (!email || !role) {
@@ -29,7 +31,6 @@ export async function POST(
     role
   }
 
-  // 👉 ak sa zadá nové heslo, zahashuj
   if (password && password.trim() !== "") {
     const hashed = await bcrypt.hash(password, 10)
     data.password = hashed
