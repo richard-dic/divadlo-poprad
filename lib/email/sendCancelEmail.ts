@@ -1,4 +1,4 @@
-import { resend } from "@/lib/resend"
+import { sendEmail } from "@/lib/mailer"
 
 type CancelEmailData = {
   email: string
@@ -21,8 +21,8 @@ export async function sendCancelEmail(data: CancelEmailData) {
 
   const totalReturned = stripeReturned + giftReturned
 
-  await resend.emails.send({
-    from: "Divadlo <onboarding@resend.dev>",
+  await sendEmail({
+
     to: email,
     subject: "Zrušenie objednávky",
     html: `

@@ -1,8 +1,10 @@
-import { Resend } from "resend"
+
 import { Prisma } from "@prisma/client"
 import { generateOrderPdf } from "@/lib/generateOrderPdf"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { sendEmail } from "@/lib/mailer"
+
+
 
 type FullOrder = Prisma.OrderGetPayload<{
   include: {
@@ -36,8 +38,7 @@ export async function sendOrderEmail(
       seats: order.tickets.map((ticket) => ticket.seat)
     })
 
-    const result = await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
+    const result = await sendEmail({
       to: email,
       subject: "Rezervácia vstupeniek",
       html: `

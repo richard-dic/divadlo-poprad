@@ -1,4 +1,4 @@
-import { resend } from "@/lib/resend"
+import { sendEmail } from "@/lib/mailer"
 
 export async function sendRescheduleEmail(
   email: string,
@@ -6,8 +6,7 @@ export async function sendRescheduleEmail(
   newDate: Date
 ) {
   try {
-    await resend.emails.send({
-      from: "Divadlo <onboarding@resend.dev>",
+    await sendEmail({
       to: email,
       subject: "Zmena termínu predstavenia",
       html: `
