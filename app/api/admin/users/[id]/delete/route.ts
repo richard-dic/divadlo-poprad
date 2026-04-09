@@ -4,7 +4,7 @@ import { requireApiRole } from "@/lib/requireApiRole"
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = await requireApiRole(["ADMIN"])
 
@@ -12,7 +12,8 @@ export async function POST(
     return auth
   }
 
-  const id = Number(params.id)
+  const { id: idParam } = await params
+  const id = Number(idParam)
 
   if (!id) {
     return NextResponse.json(
