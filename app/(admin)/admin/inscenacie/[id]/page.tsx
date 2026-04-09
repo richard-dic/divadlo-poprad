@@ -313,7 +313,10 @@ export default function Page({
             <h2 className="headingSecondary" style={{ margin: 0 }}>Termíny</h2>
 
             {id && (
-              <Link href={`/admin/terminy/new?inscenaciaId=${id}`} className="primaryBtn">
+              <Link
+                href={`/admin/terminy/new?inscenaciaId=${id}&returnTo=${encodeURIComponent(`/admin/inscenacie/${id}`)}`}
+                className="primaryBtn"
+              >
                 Pridať termín
               </Link>
             )}

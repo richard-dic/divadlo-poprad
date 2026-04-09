@@ -22,6 +22,7 @@ const STUDIO_SEATING_OPTIONS = [
 export default function Page() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const returnTo = searchParams.get("returnTo")
 
   const inscenaciaIdParam = searchParams.get("inscenaciaId")
 
@@ -93,7 +94,7 @@ export default function Page() {
       return
     }
 
-    router.push(`/admin/inscenacie/${inscenaciaId}`)
+    router.push(returnTo || `/admin/inscenacie/${inscenaciaId}`)
   }
 
   return (

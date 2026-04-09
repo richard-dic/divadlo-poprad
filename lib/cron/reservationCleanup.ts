@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma"
 export function startReservationCleanup() {
   cron.schedule("*/30 * * * * *", async () => {
     const now = new Date()
+    const orderCutoff = new Date(Date.now() - 15 * 60 * 1000) // 15 min
 
     try {
-      // 🔥 1. zmaž expirované seat rezervácie
       const expiredSeats = await prisma.reservationSeat.deleteMany({
         where: {
           expiresAt: {
@@ -15,11 +15,13 @@ export function startReservationCleanup() {
         }
       })
 
-      // 🔥 nájdi expirované orders (najprv len ID)
       const expiredOrdersList = await prisma.order.findMany({
         where: {
           status: "RESERVED_UNPAID",
-          source: "WEB"
+          source: "WEB",
+          createdAt: {
+            lt: orderCutoff
+          }
         },
         select: {
           id: true
@@ -31,7 +33,6 @@ export function startReservationCleanup() {
       let expiredOrders = { count: 0 }
 
       if (orderIds.length > 0) {
-        // 🔥 1. zmaž tickets naviazané na tieto orders
         const deletedTickets = await prisma.ticket.deleteMany({
           where: {
             orderId: {
@@ -40,7 +41,6 @@ export function startReservationCleanup() {
           }
         })
 
-        // 🔥 2. zmaž samotné orders
         expiredOrders = await prisma.order.deleteMany({
           where: {
             id: {
@@ -61,7 +61,6 @@ export function startReservationCleanup() {
           `Cleanup → seats: ${expiredSeats.count}, orders: ${expiredOrders.count}`
         )
       }
-
     } catch (err) {
       console.error("Cleanup error:", err)
     }

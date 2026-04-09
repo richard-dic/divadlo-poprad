@@ -63,7 +63,7 @@ export default function Page() {
             style={{ maxWidth: 300 }}
           />
 
-          <Link href="/admin/terminy/new">
+          <Link href="/admin/terminy/new?returnTo=%2Fadmin%2Fterminy">
             <button className="primaryBtn">Pridať</button>
           </Link>
         </div>

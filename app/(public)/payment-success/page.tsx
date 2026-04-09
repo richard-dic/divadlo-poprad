@@ -37,6 +37,14 @@ export default async function PaymentSuccess({
     return <div>Objednávka nebola nájdená.</div>
   }
 
+  if (order.status !== "PAID") {
+  return (
+    <div>
+      Platba sa ešte spracúva. Skúste stránku obnoviť o chvíľu.
+    </div>
+  )
+}
+
   const pdfFileName = `ticket-order-${order.id}.pdf`
   const pdfPath = path.join(process.cwd(), "public", "tickets", pdfFileName)
 
