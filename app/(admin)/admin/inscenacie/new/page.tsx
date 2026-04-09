@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import ImageUpload from "@/components/ImageUpload"
@@ -24,14 +24,8 @@ type FormType = {
   galleryImages: string[]
 }
 
-type EventType = {
-  id: string
-  date: string
-}
-
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page() {
   const router = useRouter()
-  const { id } = params
 
   const [form, setForm] = useState<FormType>({
     nazov: "",
@@ -49,43 +43,6 @@ export default function Page({ params }: { params: { id: string } }) {
     trailerUrl: "",
     galleryImages: []
   })
-
-  const [events, setEvents] = useState<EventType[]>([])
-
-  useEffect(() => {
-    async function load() {
-      const res = await fetch(`/api/admin/inscenacie/${id}`)
-      if (!res.ok) {
-        alert("Chyba pri načítaní inscenácie")
-        router.push("/admin/inscenacie")
-        return
-      }
-      const data = await res.json()
-      setForm({
-        nazov: data.nazov || "",
-        anotacia: data.anotacia || "",
-        obsah: data.obsah || "",
-        rezia: data.rezia || "",
-        credits: data.credits || "",
-        dlzkaMinut: data.dlzkaMinut || 120,
-        vekovaKategoria: data.vekovaKategoria || "15+",
-        datumPremiery: data.datumPremiery || "",
-        typ: data.typ || "DRÁMA",
-        viditelna: data.viditelna ?? true,
-        coverImage: data.coverImage || "",
-        heroImage: data.heroImage || "",
-        trailerUrl: data.trailerUrl || "",
-        galleryImages: data.galleryImages || []
-      })
-
-      const eventsRes = await fetch(`/api/admin/predstavenia?inscenaciaId=${id}`)
-      if (eventsRes.ok) {
-        const eventsData = await eventsRes.json()
-        setEvents(eventsData)
-      }
-    }
-    load()
-  }, [id, router])
 
   function update<K extends keyof FormType>(field: K, value: FormType[K]) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -122,8 +79,8 @@ export default function Page({ params }: { params: { id: string } }) {
       trailerUrl: form.trailerUrl.trim()
     }
 
-    const res = await fetch(`/api/admin/inscenacie/${id}`, {
-      method: "PUT",
+    const res = await fetch(`/api/admin/inscenacie`, {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...clean,
@@ -156,23 +113,12 @@ export default function Page({ params }: { params: { id: string } }) {
           }}
         >
           <h1 className="headingPrimary" style={{ marginBottom: 0 }}>
-            UPRAVIŤ INSCENÁCIU
+            PRIDAŤ INSCENÁCIU
           </h1>
 
           <div style={{ display: "flex", gap: 10 }}>
-            <button className="primaryBtn" onClick={saveItem}>Uložiť</button>
-
-            <button
-              className="primaryBtn"
-              onClick={async () => {
-                const ok = window.confirm("Naozaj chceš vymazať túto inscenáciu?")
-                if (!ok) return
-
-                await fetch(`/api/admin/inscenacie/${id}`, { method: "DELETE" })
-                router.push("/admin/inscenacie")
-              }}
-            >
-              Vymazať
+            <button className="primaryBtn" onClick={saveItem}>
+              Uložiť
             </button>
           </div>
         </div>
@@ -286,7 +232,18 @@ export default function Page({ params }: { params: { id: string } }) {
               onUpload={(url) => update("coverImage", url)}
             />
             {form.coverImage && (
-              <div style={{ marginTop: 10, width: 160, height: 160, position: "relative", borderRadius: 10, overflow: "hidden", background: "#f3f3f3", margin: "10px auto 0" }}>
+              <div
+                style={{
+                  marginTop: 10,
+                  width: 160,
+                  height: 160,
+                  position: "relative",
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  background: "#f3f3f3",
+                  margin: "10px auto 0"
+                }}
+              >
                 <Image src={form.coverImage} alt="cover" fill style={{ objectFit: "cover" }} />
               </div>
             )}
@@ -299,7 +256,18 @@ export default function Page({ params }: { params: { id: string } }) {
               onUpload={(url) => update("heroImage", url)}
             />
             {form.heroImage && (
-              <div style={{ marginTop: 10, width: 200, height: 120, position: "relative", borderRadius: 10, overflow: "hidden", background: "#f3f3f3", margin: "10px auto 0" }}>
+              <div
+                style={{
+                  marginTop: 10,
+                  width: 200,
+                  height: 120,
+                  position: "relative",
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  background: "#f3f3f3",
+                  margin: "10px auto 0"
+                }}
+              >
                 <Image src={form.heroImage} alt="hero" fill style={{ objectFit: "cover" }} />
               </div>
             )}
@@ -326,31 +294,6 @@ export default function Page({ params }: { params: { id: string } }) {
             <button className="primaryBtn" onClick={saveItem}>
               Uložiť
             </button>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 30 }}>
-          <h2 className="headingSecondary">Termíny inscenácie</h2>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 14, color: "#555" }}>
-              Prehľad termínov tejto inscenácie
-            </div>
-
-            <button
-              className="primaryBtn"
-              onClick={() => router.push(`/admin/predstavenia/new?inscenaciaId=${id}`)}
-            >
-              Pridať termín
-            </button>
-          </div>
-
-          <div style={{ display: "grid", gap: 10 }}>
-            {events.map((e) => (
-              <div key={e.id} style={{ padding: 12, border: "1px solid #eee", borderRadius: 10, background: "#fff" }}>
-                {new Date(e.date).toLocaleString()}
-              </div>
-            ))}
           </div>
         </div>
       </div>
