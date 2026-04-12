@@ -1,16 +1,14 @@
-import fs from "fs"
-import path from "path"
 import { sendEmail } from "@/lib/mailer"
+import { downloadGeneratedFile, getGeneratedFileUrl } from "@/lib/storage"
 
 export async function sendTicketEmail(
   email: string,
   orderId: number,
   pdfFile: string
 ) {
-  const filePath = path.join(process.cwd(), "public", "tickets", pdfFile)
-  const pdfBuffer = fs.readFileSync(filePath)
-
-  const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/tickets/${pdfFile}`
+  const storagePath = `tickets/${pdfFile}`
+  const pdfBuffer = await downloadGeneratedFile(storagePath)
+  const downloadUrl = getGeneratedFileUrl(storagePath)
 
   await sendEmail({
     to: email,

@@ -20,7 +20,6 @@ export default function TerminEditPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  // 🔥 LOAD
   useEffect(() => {
     async function load() {
       const res = await fetch(`/api/admin/terminy/${id}`)
@@ -29,14 +28,13 @@ export default function TerminEditPage() {
       const data = await res.json()
 
       setTermin(data)
-      setDatumCas(data.datumCas.slice(0, 16)) // pre datetime-local
+      setDatumCas(data.datumCas.slice(0, 16))
       setLoading(false)
     }
 
     if (id) load()
   }, [id])
 
-  // 🔥 SAVE
   async function save() {
     if (!datumCas) return
 

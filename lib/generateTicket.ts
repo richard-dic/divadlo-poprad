@@ -11,6 +11,7 @@ import {
   DivadelnaInscenacia,
   Hall
 } from "@prisma/client"
+import { uploadGeneratedFile } from "@/lib/storage"
 
 type OrderWithTickets = Order & {
   tickets: (Ticket & {
@@ -104,17 +105,14 @@ export async function generateTicket(order: OrderWithTickets) {
   }
 
   const pdfBytes = await pdfDoc.save()
-
-  const ticketsDir = path.join(process.cwd(), "public", "tickets")
-
-  if (!fs.existsSync(ticketsDir)) {
-    fs.mkdirSync(ticketsDir, { recursive: true })
-  }
-
   const fileName = `ticket-order-${order.id}.pdf`
-  const filePath = path.join(ticketsDir, fileName)
 
-  fs.writeFileSync(filePath, pdfBytes)
+  await uploadGeneratedFile(
+    "tickets",
+    fileName,
+    Buffer.from(pdfBytes),
+    "application/pdf"
+  )
 
   return fileName
 }

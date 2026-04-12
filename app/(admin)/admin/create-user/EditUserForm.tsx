@@ -59,7 +59,7 @@ export default function EditUserForm({ user }: { user: User }) {
 
     if (res.ok) {
       setOpen(false)
-      location.reload() // jednoduchý refresh
+      location.reload()
     } else {
       const data = await res.json()
       setError(data.error || "Chyba pri úprave")

@@ -8,7 +8,6 @@ export default function CreateUserForm() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [role, setRole] = useState("CONTROLLER")
-  const [open, setOpen] = useState(false)
   const [error, setError] = useState("")
 
   async function createUser() {
@@ -49,7 +48,6 @@ export default function CreateUserForm() {
       setConfirmPassword("")
       setRole("CONTROLLER")
 
-      // refresh page to reload users
       window.location.reload()
     } else {
       const data = await res.json()

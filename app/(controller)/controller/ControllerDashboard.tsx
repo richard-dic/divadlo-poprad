@@ -32,7 +32,6 @@ export default function ControllerDashboard() {
         Kontrolór – Termíny
       </h1>
 
-      {/* MODE SWITCH */}
       <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <button
           onClick={() => setMode("scan")}
@@ -49,7 +48,6 @@ export default function ControllerDashboard() {
         </button>
       </div>
 
-      {/* TERMIN LIST */}
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {termins.map((t) => {
           const date = new Date(t.datumCas)
@@ -106,7 +104,6 @@ export default function ControllerDashboard() {
         })}
       </div>
 
-      {/* CONTENT */}
       {terminId && (
         <div style={{ marginTop: 30 }}>
           {mode === "scan" && <ScanClient terminId={terminId} />}

@@ -11,7 +11,7 @@ export default async function PublicLayout({
 
   return (
     <>
-      {/* 🔥 len admin vidí preview */}
+      {/*len admin vidí preview */}
       {user?.role === "ADMIN" && <PreviewBar />}
 
       <PublicHeader />

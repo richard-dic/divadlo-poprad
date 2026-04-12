@@ -3,6 +3,7 @@ import fontkit from "@pdf-lib/fontkit"
 import fs from "fs"
 import path from "path"
 import QRCode from "qrcode"
+import { uploadGeneratedFile } from "@/lib/storage"
 
 type GiftCardVoucherData = {
   code: string
@@ -13,7 +14,6 @@ type GiftCardVoucherData = {
 }
 
 export async function generateGiftCardVoucher(data: GiftCardVoucherData) {
-
   const pdfDoc = await PDFDocument.create()
 
   pdfDoc.registerFontkit(fontkit)
@@ -98,18 +98,14 @@ export async function generateGiftCardVoucher(data: GiftCardVoucherData) {
   })
 
   const pdfBytes = await pdfDoc.save()
-
-  const vouchersDir = path.join(process.cwd(), "public", "giftcards")
-
-  if (!fs.existsSync(vouchersDir)) {
-    fs.mkdirSync(vouchersDir, { recursive: true })
-  }
-
   const fileName = `giftcard-${data.code}.pdf`
-  const filePath = path.join(vouchersDir, fileName)
 
-  fs.writeFileSync(filePath, pdfBytes)
+  await uploadGeneratedFile(
+    "giftcards",
+    fileName,
+    Buffer.from(pdfBytes),
+    "application/pdf"
+  )
 
   return fileName
-
 }

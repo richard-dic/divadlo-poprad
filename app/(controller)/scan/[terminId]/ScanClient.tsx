@@ -201,7 +201,7 @@ export default function ScanClient({ terminId }: { terminId: number }) {
       const data = await res.json()
 
       if (data.status === "PAID") {
-        alert(`Zaplatené ✅\nZľava: ${data.discount || 0} €`)
+        alert(`Zaplatené\nZľava: ${data.discount || 0} €`)
         await loadSeats()
 
         setResult((prev) => {
@@ -286,7 +286,7 @@ export default function ScanClient({ terminId }: { terminId: number }) {
   })
 
   function renderSeat(seat: Seat) {
-    let bg = "#27A7B2" // FREE (default)
+    let bg = "#27A7B2"
 
     if (seat.status === "CHECKED") bg = "#d4a017"
     if (seat.status === "SOLD") bg = "#1E4D4F"

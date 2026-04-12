@@ -1,8 +1,7 @@
 import Link from "next/link"
-import fs from "fs"
-import path from "path"
 import { prisma } from "@/lib/prisma"
 import { generateTicket } from "@/lib/generateTicket"
+import { getGeneratedFileUrl } from "@/lib/storage"
 
 export default async function PaymentSuccess({
   searchParams
@@ -38,23 +37,20 @@ export default async function PaymentSuccess({
   }
 
   if (order.status !== "PAID") {
-  return (
-    <div>
-      Platba sa ešte spracúva. Skúste stránku obnoviť o chvíľu.
-    </div>
-  )
-}
+    return (
+      <div>
+        Platba sa ešte spracúva. Skúste stránku obnoviť o chvíľu.
+      </div>
+    )
+  }
 
   const pdfFileName = `ticket-order-${order.id}.pdf`
-  const pdfPath = path.join(process.cwd(), "public", "tickets", pdfFileName)
 
-  let pdfExists = fs.existsSync(pdfPath)
-
-  // fallback – ak PDF ešte nie je, skús ho dovygenerovať
-  if (!pdfExists && order.tickets.length > 0) {
+  if (order.tickets.length > 0) {
     await generateTicket(order)
-    pdfExists = fs.existsSync(pdfPath)
   }
+
+  const pdfUrl = getGeneratedFileUrl(`tickets/${pdfFileName}`)
 
   return (
     <div className="section">
@@ -102,19 +98,14 @@ export default async function PaymentSuccess({
           </div>
 
           <div style={{ marginTop: 30 }}>
-            {pdfExists ? (
-              <a
-                href={`/tickets/${pdfFileName}`}
-                download
-                className="secondaryBtn"
-              >
-                Stiahnuť vstupenky (PDF)
-              </a>
-            ) : (
-              <div style={{ color: "red", fontSize: 14 }}>
-                PDF vstupenky sa nepodarilo pripraviť.
-              </div>
-            )}
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="secondaryBtn"
+            >
+              Stiahnuť vstupenky (PDF)
+            </a>
           </div>
 
           <p style={{ marginTop: 20, fontSize: 14, color: "#777" }}>

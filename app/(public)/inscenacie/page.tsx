@@ -13,98 +13,198 @@ export default async function Page() {
   })
 
   return (
-    <div style={{ padding: "60px 40px", maxWidth: 1200, margin: "0 auto" }}>
-      <h1 className="headingPrimary">REPERTOÁR</h1>
+    <>
+      <div className="repertoarPage">
+        <h1 className="headingPrimary">REPERTOÁR</h1>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
-        {inscenacie.map((item) => (
-          <Link
-            key={item.id}
-            href={`/inscenacie/${item.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: 20,
-                borderRadius: 12,
-                background: "white",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
-                padding: 20,
-                position: "relative",
-                alignItems: "flex-start"
-              }}
+        <div className="repertoarList">
+          {inscenacie.map((item) => (
+            <Link
+              key={item.id}
+              href={`/inscenacie/${item.id}`}
+              className="repertoarLink"
             >
-              {/* veková kategória */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: 20,
-                  right: 20,
-                  background: "var(--color-primary)",
-                  color: "white",
-                  fontWeight: 700,
-                  width: 50,
-                  height: 50,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 8
-                }}
-              >
-                {item.vekovaKategoria}
-              </div>
-
-              {/* obrázok */}
-              <div style={{ position: "relative", width: 180, height: 180, flexShrink: 0 }}>
-                <Image
-                  src={item.coverImage || "/default.jpg"}
-                  alt={item.nazov}
-                  fill
-                  style={{ objectFit: "cover", borderRadius: 10 }}
-                />
-              </div>
-
-              {/* obsah */}
-              <div style={{ flex: 1 }}>
-                <h2 style={{ marginTop: 0, marginBottom: 8, fontSize: 28 }}>
-                  {item.nazov}
-                </h2>
-
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    marginBottom: 12,
-                    fontSize: 14,
-                    color: "#555",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em"
-                  }}
-                >
-                  {item.rezia && (
-                    <span>Réžia: {item.rezia}</span>
-                  )}
-
-                  <span>|</span>
-
-                  <span>Dĺžka {item.dlzkaMinut} minút</span>
+              <div className="repertoarCard">
+                <div className="ageBadge">
+                  {item.vekovaKategoria}
                 </div>
 
-                <p
-                  style={{
-                    color: "#777",
-                    lineHeight: 1.6
-                  }}
-                >
-                  {item.anotacia}
-                </p>
+                <div className="imageWrap">
+                  <Image
+                    src={item.coverImage || "/default.jpg"}
+                    alt={item.nazov}
+                    fill
+                    className="coverImage"
+                  />
+                </div>
+
+                <div className="contentWrap">
+                  <h2 className="title">{item.nazov}</h2>
+
+                  <div className="metaRow">
+                    {item.rezia && <span>Réžia: {item.rezia}</span>}
+                    {item.rezia && <span className="metaDivider">|</span>}
+                    <span>Dĺžka {item.dlzkaMinut} minút</span>
+                  </div>
+
+                  <p className="annotation">{item.anotacia}</p>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .repertoarPage {
+              padding: 60px 40px;
+              max-width: 1200px;
+              margin: 0 auto;
+            }
+
+            .repertoarList {
+              display: flex;
+              flex-direction: column;
+              gap: 30px;
+            }
+
+            .repertoarLink {
+              text-decoration: none;
+              color: inherit;
+            }
+
+            .repertoarCard {
+              display: flex;
+              gap: 20px;
+              border-radius: 12px;
+              background: white;
+              box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+              padding: 20px;
+              position: relative;
+              align-items: flex-start;
+            }
+
+            .ageBadge {
+              position: absolute;
+              top: 20px;
+              right: 20px;
+              background: var(--color-primary);
+              color: white;
+              font-weight: 700;
+              width: 50px;
+              height: 50px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 8px;
+              z-index: 2;
+            }
+
+            .imageWrap {
+              position: relative;
+              width: 180px;
+              height: 180px;
+              aspect-ratio: 1 / 1;
+              flex-shrink: 0;
+            }
+
+            .coverImage {
+              object-fit: cover;
+              border-radius: 10px;
+            }
+
+            .contentWrap {
+              flex: 1;
+            }
+
+            .title {
+              margin-top: 0;
+              margin-bottom: 8px;
+              font-size: 28px;
+            }
+
+            .metaRow {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 12px;
+              font-size: 14px;
+              color: #555;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              flex-wrap: wrap;
+            }
+
+            .metaDivider {
+              display: inline-block;
+            }
+
+            .annotation {
+              color: #777;
+              line-height: 1.6;
+              margin: 0;
+            }
+
+            @media (max-width: 768px) {
+              .repertoarPage {
+                padding: 40px 16px;
+              }
+
+              .repertoarCard {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+              }
+
+              .imageWrap {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+              }
+
+              .contentWrap {
+                width: 100%;
+              }
+
+              .title {
+                font-size: 24px;
+                margin-bottom: 10px;
+                padding-right: 60px;
+              }
+
+              .metaRow {
+                gap: 8px;
+                margin-bottom: 14px;
+                font-size: 13px;
+                line-height: 1.5;
+              }
+            }
+
+            @media (max-width: 480px) {
+              .imageWrap {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+              }
+
+              .title {
+                font-size: 22px;
+              }
+
+              .metaDivider {
+                display: none;
+              }
+
+              .metaRow {
+                flex-direction: column;
+                align-items: flex-start;
+              }
+            }
+          `,
+        }}
+      />
+    </>
   )
 }

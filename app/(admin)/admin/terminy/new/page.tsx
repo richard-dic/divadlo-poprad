@@ -62,12 +62,10 @@ export default function Page() {
     void load()
   }, [inscenaciaIdParam])
 
-  // 🔥 ZISTENIE ČI JE ŠTÚDIO
   const selectedHall = halls.find((h) => h.id === hallId)
   const isStudio = selectedHall?.nazov === "Štúdio"
 
   async function createTermin() {
-    // 🔥 VALIDÁCIA
     if (isStudio && !typSedenia) {
       alert("Vyber typ sedenia pre Štúdio")
       return

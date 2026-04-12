@@ -1,6 +1,5 @@
-import fs from "fs"
-import path from "path"
 import { sendEmail } from "@/lib/mailer"
+import { downloadGeneratedFile, getGeneratedFileUrl } from "@/lib/storage"
 
 export async function sendGiftCardEmail(
   email: string,
@@ -8,10 +7,9 @@ export async function sendGiftCardEmail(
   amount: number,
   pdfFile: string
 ) {
-  const filePath = path.join(process.cwd(), "public", "giftcards", pdfFile)
-  const pdfBuffer = fs.readFileSync(filePath)
-
-  const downloadUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/giftcards/${pdfFile}`
+  const storagePath = `giftcards/${pdfFile}`
+  const pdfBuffer = await downloadGeneratedFile(storagePath)
+  const downloadUrl = getGeneratedFileUrl(storagePath)
 
   await sendEmail({
     to: email,
