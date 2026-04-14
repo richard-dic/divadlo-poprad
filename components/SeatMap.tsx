@@ -88,7 +88,14 @@ export default function SeatMap({
       return
     }
 
+    const prevMyReservedSeats = myReservedSeats
+    const prevSelectedSeats = selectedSeats
+    const prevReservedByOthersSeats = reservedByOthersSeats
+
     setLoadingSeatIds((prev) => [...prev, seatId])
+    setMyReservedSeats((prev) => [...prev, seatId])
+    setSelectedSeats((prev) => [...prev, seatId])
+    setReservedByOthersSeats((prev) => prev.filter((id) => id !== seatId))
 
     try {
       const res = await fetch("/api/rezervacia", {
@@ -105,12 +112,16 @@ export default function SeatMap({
 
       if (!res.ok) {
         const data = await res.json()
+        setMyReservedSeats(prevMyReservedSeats)
+        setSelectedSeats(prevSelectedSeats)
+        setReservedByOthersSeats(prevReservedByOthersSeats)
         setMessage(data.error || "Rezervácia zlyhala")
         setTimeout(() => setMessage(null), 2500)
       }
-
-      await loadReservedSeats()
     } catch {
+      setMyReservedSeats(prevMyReservedSeats)
+      setSelectedSeats(prevSelectedSeats)
+      setReservedByOthersSeats(prevReservedByOthersSeats)
       setMessage("Server vrátil chybu")
       setTimeout(() => setMessage(null), 2500)
     } finally {
@@ -119,7 +130,12 @@ export default function SeatMap({
   }
 
   async function releaseSeat(seatId: number) {
+    const prevMyReservedSeats = myReservedSeats
+    const prevSelectedSeats = selectedSeats
+
     setLoadingSeatIds((prev) => [...prev, seatId])
+    setMyReservedSeats((prev) => prev.filter((id) => id !== seatId))
+    setSelectedSeats((prev) => prev.filter((id) => id !== seatId))
 
     try {
       const res = await fetch("/api/rezervacia", {
@@ -136,12 +152,14 @@ export default function SeatMap({
 
       if (!res.ok) {
         const data = await res.json()
+        setMyReservedSeats(prevMyReservedSeats)
+        setSelectedSeats(prevSelectedSeats)
         setMessage(data.error || "Zrušenie rezervácie zlyhalo")
         setTimeout(() => setMessage(null), 2500)
       }
-
-      await loadReservedSeats()
     } catch {
+      setMyReservedSeats(prevMyReservedSeats)
+      setSelectedSeats(prevSelectedSeats)
       setMessage("Server vrátil chybu")
       setTimeout(() => setMessage(null), 2500)
     } finally {
@@ -196,7 +214,7 @@ export default function SeatMap({
             isReservedByOthers || isSold || isLoading
               ? "not-allowed"
               : "pointer",
-          opacity: isLoading ? 0.6 : seatOpacity,
+          opacity: isLoading ? 0.82 : seatOpacity,
           borderRadius: seat.typMiesta === "CHILD_SEAT"
             ? "50%"
             : "6px 6px 14px 14px",
@@ -205,7 +223,9 @@ export default function SeatMap({
           justifyContent: "center",
           color: "white",
           fontSize: "12px",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+          boxShadow: isMine
+            ? "0 0 0 3px rgba(212,160,23,0.22), 0 2px 6px rgba(0,0,0,0.15)"
+            : "0 2px 6px rgba(0,0,0,0.15)",
           transform: (() => {
             if (!isKidsLayout || seat.typMiesta === "CHILD_SEAT") return "none"
 
