@@ -1,4 +1,4 @@
-import { PDFDocument, rgb } from "pdf-lib"
+import { PDFDocument, PDFPage, rgb } from "pdf-lib"
 import fontkit from "@pdf-lib/fontkit"
 import fs from "fs"
 import path from "path"
@@ -23,6 +23,12 @@ type OrderWithTickets = Order & {
   }
 }
 
+const PAGE_WIDTH = 600
+const PAGE_HEIGHT = 320
+const ACCENT = rgb(0 / 255, 94 / 255, 97 / 255)
+const TEXT = rgb(0, 0, 0)
+const MUTED = rgb(65 / 255, 65 / 255, 65 / 255)
+
 export async function generateTicket(order: OrderWithTickets) {
   const pdfDoc = await PDFDocument.create()
 
@@ -30,77 +36,107 @@ export async function generateTicket(order: OrderWithTickets) {
 
   const fontPath = path.join(process.cwd(), "fonts", "Roboto-Regular.ttf")
   const fontBytes = fs.readFileSync(fontPath)
-
   const font = await pdfDoc.embedFont(fontBytes)
 
+  const backgroundPath = path.join(process.cwd(), "public", "backgrounds", "whiteBG.jpg")
+  const tatryPath = path.join(process.cwd(), "public", "ui", "tatry.png")
+  const logoPath = path.join(process.cwd(), "public", "ui", "logo.png")
+
+  const backgroundBytes = fs.readFileSync(backgroundPath)
+  const tatryBytes = fs.readFileSync(tatryPath)
+  const logoBytes = fs.readFileSync(logoPath)
+
+  const backgroundImage = await pdfDoc.embedJpg(backgroundBytes)
+  const tatryImage = await pdfDoc.embedPng(tatryBytes)
+  const logoImage = await pdfDoc.embedPng(logoBytes)
+
   for (const t of order.tickets) {
-    const page = pdfDoc.addPage([600, 320])
-    const { height } = page.getSize()
+    const page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
 
-    const qrData = t.code
-    const qrImage = await QRCode.toDataURL(qrData)
+    page.drawImage(backgroundImage, {
+      x: 0,
+      y: 0,
+      width: PAGE_WIDTH,
+      height: PAGE_HEIGHT,
+      opacity: 1
+    })
 
-    page.drawText("Divadlo Poprad", {
-      x: 200,
-      y: height - 50,
+    const watermarkMaxWidth = 360
+    const watermarkScale = watermarkMaxWidth / logoImage.width
+    const watermarkDims = logoImage.scale(watermarkScale)
+    const watermarkX = (PAGE_WIDTH - watermarkDims.width) / 2
+    const watermarkY = (PAGE_HEIGHT - watermarkDims.height) / 2 + 6
+
+    page.drawImage(logoImage, {
+      x: watermarkX,
+      y: watermarkY,
+      width: watermarkDims.width,
+      height: watermarkDims.height,
+      opacity: 0.14
+    })
+
+    page.drawText("VSTUPENKA", {
+      x: 42,
+      y: PAGE_HEIGHT - 42,
+      size: 11,
+      font,
+      color: ACCENT
+    })
+
+    drawBoldText(page, order.termin.inscenacia.nazov, {
+      x: 42,
+      y: PAGE_HEIGHT - 86,
       size: 24,
       font,
-      color: rgb(0, 0, 0)
+      color: TEXT,
+      maxWidth: 340
     })
 
-    page.drawText(`Inscenácia: ${order.termin.inscenacia.nazov}`, {
-      x: 50,
-      y: height - 110,
-      size: 16,
-      font
-    })
+    drawLabelValue(page, font, "Dátum", formatEventDate(order.termin.datumCas), 42, PAGE_HEIGHT - 126)
+    drawLabelValue(page, font, "Priestor", order.termin.hall.nazov, 42, PAGE_HEIGHT - 152)
+    drawLabelValue(page, font, "Miesto", formatSeat(t.seat), 42, PAGE_HEIGHT - 178)
 
-    page.drawText(
-      `Dátum: ${order.termin.datumCas.toLocaleString("sk-SK")}`,
-      {
-        x: 50,
-        y: height - 140,
-        size: 16,
-        font
+    const qrImage = await QRCode.toDataURL(t.code, {
+      errorCorrectionLevel: "H",
+      margin: 1,
+      color: {
+        dark: "#005E61",
+        light: "#00000000"
       }
+    })
+
+    const qrImageBytes = Buffer.from(
+      qrImage.replace(/^data:image\/png;base64,/, ""),
+      "base64"
     )
-
-    page.drawText(`Priestor: ${order.termin.hall.nazov}`, {
-      x: 50,
-      y: height - 170,
-      size: 16,
-      font
-    })
-
-    page.drawText(formatSeat(t.seat), {
-      x: 50,
-      y: height - 200,
-      size: 16,
-      font
-    })
-
-    page.drawText(`Objednávka: ${order.id}`, {
-      x: 50,
-      y: height - 230,
-      size: 12,
-      font
-    })
-
-    page.drawText(`Kód vstupenky: ${t.code}`, {
-      x: 50,
-      y: height - 250,
-      size: 12,
-      font
-    })
-
-    const qrImageBytes = await fetch(qrImage).then((res) => res.arrayBuffer())
     const qrEmbed = await pdfDoc.embedPng(qrImageBytes)
 
     page.drawImage(qrEmbed, {
-      x: 420,
-      y: height - 240,
-      width: 120,
-      height: 120
+      x: 408,
+      y: 112,
+      width: 132,
+      height: 132
+    })
+
+    const codeSize = 10
+    const codeWidth = font.widthOfTextAtSize(t.code, codeSize)
+    const qrCenterX = 408 + 132 / 2
+    const codeX = qrCenterX - codeWidth / 2
+
+    page.drawText(t.code, {
+      x: codeX,
+      y: 94,
+      size: codeSize,
+      font,
+      color: MUTED
+    })
+
+    page.drawImage(tatryImage, {
+      x: 0,
+      y: 0,
+      width: PAGE_WIDTH,
+      height: 54,
+      opacity: 0.98
     })
   }
 
@@ -116,6 +152,70 @@ export async function generateTicket(order: OrderWithTickets) {
 
   return fileName
 }
+
+function drawLabelValue(
+  page: PDFPageLike,
+  font: Awaited<ReturnType<PDFDocument["embedFont"]>>,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  valueSize = 13
+) {
+  page.drawText(`${label}:`, {
+    x,
+    y,
+    size: 11,
+    font,
+    color: ACCENT
+  })
+
+  page.drawText(value, {
+    x: x + 78,
+    y,
+    size: valueSize,
+    font,
+    color: TEXT,
+    maxWidth: 260
+  })
+}
+
+function drawBoldText(
+  page: PDFPageLike,
+  text: string,
+  options: {
+    x: number
+    y: number
+    size: number
+    font: Awaited<ReturnType<PDFDocument["embedFont"]>>
+    color: ReturnType<typeof rgb>
+    maxWidth?: number
+  }
+) {
+  page.drawText(text, options)
+  page.drawText(text, {
+    ...options,
+    x: options.x + 0.35,
+    y: options.y
+  })
+  page.drawText(text, {
+    ...options,
+    x: options.x,
+    y: options.y - 0.2
+  })
+}
+
+function formatEventDate(date: Date) {
+  const d = String(date.getDate()).padStart(2, "0")
+  const m = String(date.getMonth() + 1).padStart(2, "0")
+  const y = date.getFullYear()
+  const h = String(date.getHours()).padStart(2, "0")
+  const min = String(date.getMinutes()).padStart(2, "0")
+
+  return `${d}.${m}.${y} | ${h}:${min}`
+}
+
+type PDFPageLike = Pick<PDFPage, "drawText" | "drawImage">
 
 function formatSeat(seat: {
   typMiesta: string
